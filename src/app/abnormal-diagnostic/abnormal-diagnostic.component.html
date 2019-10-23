@@ -1,0 +1,140 @@
+<body class="mainBody">
+  <app-header></app-header>
+  <br />
+  <div class="main-contanier" style="width:90%;margin:50px auto;margin-bottom:0;">
+    <div style="margin:0 auto;width:100%;">
+      <nav>
+        <div class="navLogoBg">
+          <div style="color:#fff;font-size:45px;text-align:center;bottom: 20px;width:300px;">
+            {{'title' | translate}}
+          </div>
+        </div>
+        <div id='subNav' class="clearfix">
+          <div class="pull-left title">
+            {{'microApp' | translate}}
+            <i nz-icon type="right"></i>
+            {{'title' | translate}}
+          </div>
+        </div>
+      </nav>
+      <div class="content1">
+        <div class="body-content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-xs-12" style="background: #fff;padding-bottom: 15px;">
+                <div class="line-title clearfix">
+                  <div class="pull-left">
+                    <h5 style="border-left: 4px solid #004ad1;">{{'abnormalDiagnostic' | translate}}</h5>
+                  </div>
+                  <div class="pull-right form-inline">
+                    <div class="form-group">
+                      <div style="float: right;">
+                        <app-reset-plan></app-reset-plan>
+                        <a [routerLink]="['/abnormalShowed']"
+                          class="btn btn-info btn-xs">{{'historyLink' | translate}}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row clearfix">
+                  <div class="col-md-7">
+                    <div class="col-md-8">
+                      <div [options]="btsAnbormalDiagChartOptions" id="btsAnbormalDiagChart" echarts class="chart"
+                        style="height:420px;"></div>
+                      <div class="col-md-12 assess-bg">
+                        <label>{{'maxCheckTime' | translate}}:</label>
+                        <span>{{maxCheckTime}}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-4" style="text-align: center;">
+                      <div class="circle-key" style="background:#F0AD4E;border:1px solid #FF9500;">{{alarmCount}}</div>
+                      <label>{{'activeAlarm' | translate}}</label>
+                      <div class="circle-key" style="background:#92D050;border:1px solid #24FF24;">{{outageCount}}</div>
+                      <label>{{'btsOutage' | translate}}</label>
+                      <div class="circle-key" style="background:#7030A0;border:1px solid #0F0317;">{{sleepcellCount}}
+                      </div>
+                      <label>{{'sleepingBts' | translate}}</label>
+                      <div class="circle-key">
+                        <a [routerLink]="['/pendingDetail']">
+                          <img src="/neg-bts-auto-reset-web-agl/assets/images/weihu.png" style="width:100%;">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="col-md-12 circle-bg">
+                      <div style="text-align: center;">
+                        <div class=" deal-num" style="display:inline-block;">
+                          <label>{{bookingWakeUpCount}}{{'one' | translate}}</label><br>
+                          <a [routerLink]="['/pendingBooking']"
+                            class="btn btn-warning btn-xs">{{'todayBookingCount' | translate}}</a>
+                        </div>
+                        <div class="deal-num" style="display:inline-block;">
+                          <label>{{landingStationCount}}{{'one' | translate}}</label><br>
+                          <a [routerLink]="['/resetResultTody']" [queryParams]="{meType:'waitSa'}"
+                            class="btn btn-danger btn-xs">{{'todayLandingCount' | translate}}</a>
+                        </div>
+                        <div class="deal-num" style="display:inline-block;">
+                          <label (mouseover)="showDetail()" (mouseleave)="hideDetail()"
+                            style="position: relative;">{{successWakeUpCount}}{{'one' | translate}}
+                            <!-- 当日成功唤醒数 title -->
+                            <ul *ngIf="isShow" class="success-title circle-bg">
+                              <li>{{'instantWakeUp' | translate}}: <span>{{instantSuccessWakeUpCount}}个</span></li>
+                              <li>{{'delayedWakeUp' | translate}}: <span>{{delayedSuccessWakeUpCount}}个</span></li>
+                              <li>{{'bookingWakeUp' | translate}}: <span>{{bookingSuccessWakeUpCount}}个</span></li>
+                            </ul>
+                          </label><br>
+                          <a [routerLink]="['/resetResultTody']" [queryParams]="{meType:'wakeScu'}"
+                            class="btn btn-info btn-xs">{{'todaySuccessNum' | translate}}</a>
+                        </div>
+                        <div class=" deal-num" style="display:inline-block;">
+                          <label>{{successLandingStationCount}}个</label><br>
+                          <a [routerLink]="['/resetResultTody']" [queryParams]="{meType:'waitScu'}"
+                            class="btn btn-success btn-xs">{{'todaySuccessLandingNum' | translate}}</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="circle-bg" style="border-radius: 33px;height: 440px;padding: 10px">
+                      <div id="mapDiv" style="height: 100%"></div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-footer></app-footer>
+
+  <!-- 下面的内容为解决ts代码里面中文字符串国际化 -->
+  <div style="display: none">
+    <!-- 轻度 -->
+    <div id="degreeLight">{{'degreeLight' | translate}}</div>
+    <!-- 中度 -->
+    <div id="degreeModerate">{{'degreeModerate' | translate}}</div>
+    <!-- 严重 -->
+    <div id="degreeSerious">{{'degreeSerious' | translate}}</div>
+    <!-- 灾难 -->
+    <div id="degreeDisaster">{{'degreeDisaster' | translate}}</div>
+    <!-- 当前需关注异常数 -->
+    <div id="chartTitleTxt">{{'chartTitleTxt' | translate}}</div>
+    <!-- 详情 -->
+    <div id="detail">{{'detail' | translate}}</div>
+    <!-- 激活告警 -->
+    <div id="activeAlarm">{{'activeAlarm' | translate}}</div>
+    <!-- 基站退服 -->
+    <div id="btsOutage">{{'btsOutage' | translate}}</div>
+    <!-- 休眠基站 -->
+    <div id="sleepingBts">{{'sleepingBts' | translate}}</div>
+    <!-- 个 -->
+    <div id="one">{{'one' | translate}}</div>
+    <!-- 异常基站数据通信失败 -->
+    <div id="abnormalBtsGetFailed">{{'abnormalBtsGetFailed' | translate}}</div>
+    <!-- 地图数据获取失败 -->
+    <div id="mapDataGetFailed">{{'mapDataGetFailed' | translate}}</div>
+  </div>
+
+</body>

@@ -1,0 +1,703 @@
+<body class="mainBody">
+    <div class="main-contanier" style="width:90%;margin:50px auto;margin-bottom:0;">
+        <div style="margin:0 auto;width:100%;">
+            <nav>
+                <div class="navLogoBg">
+                    <div style="color:#fff;font-size:45px;text-align:center;bottom: 20px;width:300px;">
+                        {{'title' | translate}}
+                    </div>
+                </div>
+                <div id='subNav' class="clearfix">
+                    <div class="pull-left title">
+                        {{'microApp' | translate}}
+                        <i nz-icon type="right"></i>
+                        <a style="color:#fff" [routerLink]="['/abnormalDiagnostic']">{{'title' | translate}}</a>
+                        <i nz-icon type="right"></i>
+                        {{'historyRes' | translate}}
+                    </div>
+                </div>
+            </nav>
+            <div class="content1">
+                <div class="body-content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="pull-left">
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a [routerLink]="['/abnormalShowed']"
+                                            [queryParams]="{user: 'admin', token: '123456789'}" role="tab"
+                                            data-toggle="tab" hasInit='true'>{{'abnormalDataShowed' | translate}}</a>
+                                    </li>
+                                    <li role="presentation"><a [routerLink]="['/resetResult']"
+                                            [queryParams]="{meType:'history'}" role="tab" data-toggle="tab"
+                                            hasInit='false'>{{'resetResultList' | translate}}</a></li>
+                                    <li role="presentation"><a [routerLink]="['/ResidueStation']"
+                                            [queryParams]="{meType:'residue'}" role="tab" data-toggle="tab"
+                                            hasInit='false'>{{'residueStationList' | translate}}</a></li>
+                                </ul>
+                            </div>
+                            <div class="pull-right" style="margin-top: 10px;">
+                                <a [routerLink]="['/abnormalDiagnostic']"
+                                    class="btn btn-info btn-xs">{{'back' | translate}}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ---------------------------------------------------------------------------------------------------------- -->
+                    <div class="row content2">
+                        <div class="col-md-12">
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="Tscene1">
+                                    <div class="col-xs-12" style="background: #fff;padding-bottom: 15px;">
+                                        <div class="line-title clearfix">
+                                            <div class="pull-left">
+                                                <h5 style="border-left: 4px solid #004ad1;">
+                                                    {{'abnormalDataShowed' | translate}}</h5>
+                                            </div>
+                                            <div class="form-group">
+                                                <nz-form-item>
+                                                    <nz-form-label [nzSpan]="4">{{'dimension' | translate}}
+                                                    </nz-form-label>
+                                                    <nz-form-control [nzSpan]="4">
+                                                        <nz-select style="width: 180px;margin-right:5px;"
+                                                            [(ngModel)]="dimensionValue"
+                                                            (ngModelChange)="dimensionChange($event)">
+                                                            <nz-option *ngFor="let option of dimensionList"
+                                                                [nzLabel]="option.name" [nzValue]="option.code">
+                                                            </nz-option>
+                                                        </nz-select>
+                                                    </nz-form-control>
+                                                </nz-form-item>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="activeAlarm === true" [options]="activeAlarmLineChartOptions"
+                                            id="activeAlarmLineChart" echarts class="chart" style="height:220px;"></div>
+                                        <div *ngIf="brokenBts === true" [options]="brokenBtsLineChartOptions"
+                                            id="brokenBtsLineChart" echarts class="chart" style="height:220px;"></div>
+                                        <div *ngIf="sleepCell === true" [options]="sleepCellLineChartOptions"
+                                            id="sleepCellLineChart" echarts class="chart" style="height:220px;"></div>
+                                        <br />
+                                        <!-- 激活告警维度的筛选条件 -->
+                                        <div *ngIf="activeAlarm === true">
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'belongCity' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear style="width:170px;"
+                                                        [(ngModel)]="activeAlarmCityCode"
+                                                        (ngModelChange)="activeAlarmCityChange($event)">
+                                                        <nz-option *ngFor="let option of activeAlarmCityList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'belongArea' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear [(ngModel)]="activeAlarmAreaCode"
+                                                        style="width:170px;"
+                                                        (ngModelChange)="activeAlarmAreaChange($event)">
+                                                        <nz-option *ngFor="let option of activeAlarmAreaList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="4">{{'startTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="activeAlarmStartTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="activeAlarmResetForm()"><i nz-icon
+                                                        type="redo"></i>{{'reset' | translate}}</button>
+                                            </nz-form-item>
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'btsVersion' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="activeAlarmNeVersion"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'btsName' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="activeAlarmNeName"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="4">{{'endTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="activeAlarmEndTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="acitveAlarmQueryFun('slb_001')"><i nz-icon
+                                                        type="search"></i>{{'query' | translate}}</button>
+                                            </nz-form-item>
+                                        </div>
+                                        <!--激活告警数据列表-->
+                                        <nz-table *ngIf="activeAlarm === true" #activeAlarmTable nzSize="small"
+                                            nzBordered [nzData]="activeAlarmTableDataList"
+                                            [(nzTotal)]="activeAlarmTotal" [(nzPageSize)]="activeAlarmPageSize"
+                                            [(nzPageIndex)]="activeAlarmPage" [nzFrontPagination]="false"
+                                            (nzPageIndexChange)="queryAcitveAlarmTableDataList('slb_001')"
+                                            [nzScroll]="{x:'1300px', y: '488px'}" nzShowSizeChanger
+                                            [nzPageSizeOptions]="[10,20,50,100]"
+                                            (nzPageSizeChange)="queryAcitveAlarmTableDataList('slb_001')"
+                                            [nzLoading]="activeAlarmTableLoding"
+                                            [nzShowTotal]="activeAlarmTotalTemplate"
+                                            [nzNoResult]="'tableNoResult' | translate">
+                                            <ng-template #activeAlarmTotalTemplate let-total>
+                                                {{'itemTotal' | translate}}:{{activeAlarmTotal}}{{'items' | translate}}
+                                            </ng-template>
+                                            <thead>
+                                                <tr>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neCode" | translate}}'>{{'neCode' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neName" | translate}}'>{{'neName' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongCity" | translate}}'>{{'belongCity' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongArea" | translate}}'>{{'belongArea' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neType" | translate}}'>{{'neType' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"btsVersion" | translate}}'>{{'btsVersion' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"ip" | translate}}'>{{'ip' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"alarmNo" | translate}}'>{{'alarmNo' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"alarmLevel" | translate}}'>{{'alarmLevel' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"alarmCell" | translate}}'>{{'alarmCell' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='diagInfo'>diagInfo</span></th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"alarmTime" | translate}}'>{{'alarmTime' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"checkTime" | translate}}'>{{'checkTime' | translate}}</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let data of activeAlarmTable.data">
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neCode}}'>{{data.neCode}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neName}}'>{{data.neName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.cityName}}'>{{data.cityName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.regionName}}'>{{data.regionName}}</span></td>
+
+                                                    <td *ngIf="data.neType === '1'"><span class='abnormalTable span'
+                                                            title='{{"neType_1" | translate}}'>{{'neType_1' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '2'"><span class='abnormalTable span'
+                                                            title='{{"neType_2" | translate}}'>{{'neType_2' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '3'"><span class='abnormalTable span'
+                                                            title='{{"neType_3" | translate}}'>{{'neType_3' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '4'"><span class='abnormalTable span'
+                                                            title='{{"neType_4" | translate}}'>{{'neType_4' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '5'"><span class='abnormalTable span'
+                                                            title='{{"neType_5" | translate}}'>{{'neType_5' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '6'"><span class='abnormalTable span'
+                                                            title='{{"neType_6" | translate}}'>{{'neType_6' | translate}}</span>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="data.neType != '6' && data.neType != '5' && data.neType != '4' && data.neType != '3' && data.neType != '2' && data.neType != '1'">
+                                                        <span class='abnormalTable span'
+                                                            title='{{data.neType}}'>{{data.neType}}</span>
+                                                    </td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neVersion}}'>{{data.neVersion}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neIp}}'>{{data.neIp}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.alarmNo}}'>{{data.alarmNo}}</span></td>
+
+                                                    <td *ngIf="data.alarmLevel === 'Warning'"><span
+                                                            class='abnormalTable span'
+                                                            title='{{data.alarmLevel}}'>{{data.alarmLevel}}</span></td>
+                                                    <td *ngIf="data.alarmLevel === '*'"><span class='abnormalTable span'
+                                                            title='{{data.alarmLevel}}'>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#0000FF"></i>
+                                                        </span></td>
+                                                    <td *ngIf="data.alarmLevel === '**'"><span
+                                                            class='abnormalTable span' title='{{data.alarmLevel}}'>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#00FF00"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#00FF00"></i>
+                                                        </span></td>
+                                                    <td *ngIf="data.alarmLevel === '***'"><span
+                                                            class='abnormalTable span' title='{{data.alarmLevel}}'>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF0000"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF0000"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF0000"></i>
+                                                        </span></td>
+                                                    <td *ngIf="data.alarmLevel === '****'"><span
+                                                            class='abnormalTable span' title='{{data.alarmLevel}}'>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF6600"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF6600"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF6600"></i>
+                                                            <i nz-icon type="star" theme="twotone"
+                                                                twoToneColor="#FF6600"></i>
+                                                        </span></td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.alarmCell}}'>{{data.alarmCell}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.diagInfo}}'>{{data.diagInfo}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title={{data.startTime}}>{{data.startTime}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title={{data.checkTime}}>{{data.checkTime}}</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </nz-table>
+
+                                        <!-- 退服基站维度的筛选条件 -->
+                                        <div *ngIf="brokenBts === true">
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'belongCity' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear style="width:170px;"
+                                                        [(ngModel)]="btsOutageCityCode"
+                                                        (ngModelChange)="btsOutageCityChange($event)">
+                                                        <nz-option *ngFor="let option of btsOutageCityList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'belongArea' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear [(ngModel)]="btsOutageAreaCode"
+                                                        style="width:170px;"
+                                                        (ngModelChange)="btsOutageAreaChange($event)">
+                                                        <nz-option *ngFor="let option of btsOutageAreaList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'startTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="btsOutageStartTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="btsOutageResetForm()"><i nz-icon
+                                                        type="redo"></i>{{'reset' | translate}}</button>
+                                            </nz-form-item>
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'btsVersion' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="btsOutageNeVersion"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'btsName' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="btsOutageNeName"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'endTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="btsOutageEndTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+
+
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="btsOutageQueryFun('slb_002')"><i nz-icon
+                                                        type="search"></i>{{'query' | translate}}</button>
+                                            </nz-form-item>
+                                        </div>
+                                        <!--退服基站数据列表-->
+                                        <nz-table *ngIf="brokenBts === true" #brokenBtsTable nzSize="small" nzBordered
+                                            [nzData]="btsOutageTableDataList" [(nzTotal)]="btsOutageTotal"
+                                            [(nzPageSize)]="btsOutagePageSize" [(nzPageIndex)]="btsOutagePage"
+                                            [nzFrontPagination]="false"
+                                            (nzPageIndexChange)="queryBtsOutageTableDataList('slb_002')"
+                                            [nzScroll]="{x:'1300px', y: '488px'}" nzShowSizeChanger
+                                            [nzPageSizeOptions]="[10,20,50,100]"
+                                            (nzPageSizeChange)="queryBtsOutageTableDataList('slb_002')"
+                                            [nzLoading]="btsOutageTableLoding" [nzShowTotal]="btsOutageTotalTemplate"
+                                            [nzNoResult]="'tableNoResult' | translate">
+                                            <ng-template #btsOutageTotalTemplate let-total>
+                                                {{'itemTotal' | translate}}:{{btsOutageTotal}}{{'items' | translate}}
+                                            </ng-template>
+                                            <thead>
+                                                <tr>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neCode" | translate}}'>{{'neCode' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neName" | translate}}'>{{'neName' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongCity" | translate}}'>{{'belongCity' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongArea" | translate}}'>{{'belongArea' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neType" | translate}}'>{{'neType' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"btsVersion" | translate}}'>{{'btsVersion' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"ip" | translate}}'>{{'ip' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"transState" | translate}}'>{{'transState' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"btsStatus" | translate}}'>{{'btsStatus' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"checkTime" | translate}}'>{{'checkTime' | translate}}</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let data of brokenBtsTable.data">
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neCode}}'>{{data.neCode}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neName}}'>{{data.neName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.cityName}}'>{{data.cityName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.regionName}}'>{{data.regionName}}</span></td>
+
+                                                    <td *ngIf="data.neType === '1'"><span class='abnormalTable span'
+                                                            title='{{"neType_1" | translate}}'>{{'neType_1' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '2'"><span class='abnormalTable span'
+                                                            title='{{"neType_2" | translate}}'>{{'neType_2' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '3'"><span class='abnormalTable span'
+                                                            title='{{"neType_3" | translate}}'>{{'neType_3' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '4'"><span class='abnormalTable span'
+                                                            title='{{"neType_4" | translate}}'>{{'neType_4' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '5'"><span class='abnormalTable span'
+                                                            title='{{"neType_5" | translate}}'>{{'neType_5' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '6'"><span class='abnormalTable span'
+                                                            title='{{"neType_6" | translate}}'>{{'neType_6' | translate}}</span>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="data.neType != '6' && data.neType != '5' && data.neType != '4' && data.neType != '3' && data.neType != '2' && data.neType != '1'">
+                                                        <span class='abnormalTable span'
+                                                            title='{{data.neType}}'>{{data.neType}}</span>
+                                                    </td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neVersion}}'>{{data.neVersion}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neIp}}'>{{data.neIp}}</span></td>
+
+                                                    <td *ngIf="data.transState === '0'"><span class='abnormalTable span'
+                                                            title='{{"normal" | translate}}'>{{'normal' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.transState === '1'"><span class='abnormalTable span'
+                                                            title='{{"abnormal" | translate}}'>{{'abnormal' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.transState != '0' && data.transState != '1'"><span
+                                                            class='abnormalTable span'
+                                                            title='{{data.transState}}'>{{data.transState}}</span></td>
+
+                                                    <td *ngIf="data.btsStatus === '0'"><span class='abnormalTable span'
+                                                            title='initializing'>initializing</span></td>
+                                                    <td *ngIf="data.btsStatus === '1'"><span class='abnormalTable span'
+                                                            title='commissioned'>commissioned</span></td>
+                                                    <td *ngIf="data.btsStatus === '2'"><span class='abnormalTable span'
+                                                            title='notCommisioned'>notCommisioned</span></td>
+                                                    <td *ngIf="data.btsStatus === '3'"><span class='abnormalTable span'
+                                                            title='configured'>configured</span></td>
+                                                    <td *ngIf="data.btsStatus === '4'"><span class='abnormalTable span'
+                                                            title='integrated to RAN'>integrated to RAN</span></td>
+                                                    <td *ngIf="data.btsStatus === '5'"><span class='abnormalTable span'
+                                                            title='onAir'>onAir</span></td>
+                                                    <td *ngIf="data.btsStatus === '6'"><span class='abnormalTable span'
+                                                            title='test'>test</span></td>
+                                                    <td
+                                                        *ngIf="data.btsStatus != '0' && data.btsStatus != '1' && data.btsStatus != '2' && data.btsStatus != '3' && data.btsStatus != '4' && data.btsStatus != '5' && data.btsStatus != '6'">
+                                                        <span class='abnormalTable span'
+                                                            title='{{data.btsStatus}}'>{{data.btsStatus}}</span>
+                                                    </td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.checkTime}}'>{{data.checkTime}}</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </nz-table>
+
+                                        <!-- 休眠小区维度的筛选条件 -->
+                                        <div *ngIf="sleepCell === true">
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'belongCity' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear style="width:170px;"
+                                                        [(ngModel)]="sleepingCellCityCode"
+                                                        (ngModelChange)="sleepingCellCityChange($event)">
+                                                        <nz-option *ngFor="let option of sleepingCellCityList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'belongArea' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-select nzAllowClear [(ngModel)]="sleepingCellAreaCode"
+                                                        style="width:170px;"
+                                                        (ngModelChange)="sleepingCellAreaChange($event)">
+                                                        <nz-option *ngFor="let option of sleepingCellAreaList"
+                                                            [nzLabel]="option.area_name" [nzValue]="option.area_code">
+                                                        </nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'startTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="sleepingCellStartTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                            <nz-form-item style="height:25px;">
+                                                <nz-form-label [nzSpan]="2">{{'btsVersion' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="sleepingCellNeVersion"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'btsName' | translate}}</nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <input nz-input type="text" [(ngModel)]="sleepingCellNeName"
+                                                        style="width:170px;">
+                                                </nz-form-control>
+
+                                                <nz-form-label [nzSpan]="2">{{'endTime_abnormal' | translate}}
+                                                </nz-form-label>
+                                                <nz-form-control [nzSpan]="4">
+                                                    <nz-date-picker nzShowTime [(ngModel)]="sleepingCellEndTime"
+                                                        nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                                                </nz-form-control>
+
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="sleepingCellResetForm()"><i nz-icon
+                                                        type="redo"></i>{{'reset' | translate}}</button>
+                                                <button nz-button nzType="primary" nzSize="small"
+                                                    class="btn btn-primary btn-xs"
+                                                    style="width:100px;float:right;margin-left:8px;"
+                                                    (click)="sleepingCellQueryFun('slb_003')"><i nz-icon
+                                                        type="search"></i>{{'query' | translate}}</button>
+                                            </nz-form-item>
+                                        </div>
+                                        <!--休眠小区数据列表-->
+                                        <nz-table *ngIf="sleepCell === true" #sleepCellTable nzSize="small" nzBordered
+                                            [nzData]="sleepingCellTableDataList" [(nzTotal)]="sleepingCellTotal"
+                                            [(nzPageSize)]="sleepingCellPageSize" [(nzPageIndex)]="sleepingCellPage"
+                                            [nzFrontPagination]="false"
+                                            (nzPageIndexChange)="querySleepingCellTableDataList('slb_003')"
+                                            [nzScroll]="{x:'1300px', y: '488px'}" nzShowSizeChanger
+                                            [nzPageSizeOptions]="[10,20,50,100]"
+                                            (nzPageSizeChange)="querySleepingCellTableDataList('slb_003')"
+                                            [nzLoading]="sleepingCellTableLoding"
+                                            [nzShowTotal]="sleepingCellTotalTemplate"
+                                            [nzNoResult]="'tableNoResult' | translate">
+                                            <ng-template #sleepingCellTotalTemplate let-total>
+                                                {{'itemTotal' | translate}}:{{sleepingCellTotal}}{{'items' | translate}}
+                                            </ng-template>
+                                            <thead>
+                                                <tr>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neCode" | translate}}'>{{'neCode' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neName" | translate}}'>{{'neName' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"cellId" | translate}}'>{{'cellId' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongCity" | translate}}'>{{'belongCity' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"belongArea" | translate}}'>{{'belongArea' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"neType" | translate}}'>{{'neType' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"btsVersion" | translate}}'>{{'btsVersion' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"ip" | translate}}'>{{'ip' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"cellRunningStatus" | translate}}'>{{'cellRunningStatus' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"cellTputUl" | translate}}'>{{'cellTputUl' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"cellTputDl" | translate}}'>{{'cellTputDl' | translate}}</span>
+                                                    </th>
+                                                    <th><span class='abnormalTable span'
+                                                            title='{{"checkTime" | translate}}'>{{"checkTime" | translate}}</span>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let data of sleepCellTable.data">
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neCode}}'>{{data.neCode}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neName}}'>{{data.neName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.cellId}}'>{{data.cellId}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.cityName}}'>{{data.cityName}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.regionName}}'>{{data.regionName}}</span></td>
+
+                                                    <td *ngIf="data.neType === '1'"><span class='abnormalTable span'
+                                                            title='{{"neType_1" | translate}}'>{{'neType_1' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '2'"><span class='abnormalTable span'
+                                                            title='{{"neType_2" | translate}}'>{{'neType_2' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '3'"><span class='abnormalTable span'
+                                                            title='{{"neType_3" | translate}}'>{{'neType_3' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '4'"><span class='abnormalTable span'
+                                                            title='{{"neType_4" | translate}}'>{{'neType_4' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '5'"><span class='abnormalTable span'
+                                                            title='{{"neType_5" | translate}}'>{{'neType_5' | translate}}</span>
+                                                    </td>
+                                                    <td *ngIf="data.neType === '6'"><span class='abnormalTable span'
+                                                            title='{{"neType_6" | translate}}'>{{'neType_6' | translate}}</span>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="data.neType != '6' && data.neType != '5' && data.neType != '4' && data.neType != '3' && data.neType != '2' && data.neType != '1'">
+                                                        <span class='abnormalTable span'
+                                                            title='{{data.neType}}'>{{data.neType}}</span>
+                                                    </td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neVersion}}'>{{data.neVersion}}</span></td>
+                                                    <td><span class='abnormalTable span'
+                                                            title='{{data.neIp}}'>{{data.neIp}}</span></td>
+
+                                                    <td *ngIf="data.cellRunningStatus === '0'"><span
+                                                            class='abnormalTable span' title='disabled'>disabled</span>
+                                                    </td>
+                                                    <td *ngIf="data.cellRunningStatus === '1'"><span
+                                                            class='abnormalTable span' title='enabled'>enabled</span>
+                                                    </td>
+                                                    <td
+                                                        *ngIf="data.cellRunningStatus != '0' && data.cellRunningStatus != '1'">
+                                                        <span class='abnormalTable span'
+                                                            title='{{data.cellRunningStatus}}'>{{data.cellRunningStatus}}</span>
+                                                    </td>
+
+                                                    <td *ngIf="data.tputUlRed === '1'"><span class='abnormalTable span'
+                                                            style="color:#FF0000"
+                                                            title='{{data.cellTputUl}}'>{{data.cellTputUl}}</span></td>
+                                                    <td *ngIf="data.tputUlRed === '0'"><span class='abnormalTable span'
+                                                            title='{{data.cellTputUl}}'>{{data.cellTputUl}}</span></td>
+
+                                                    <td *ngIf="data.tputDlRed === '1'"><span class='abnormalTable span'
+                                                            style="color:#FF0000"
+                                                            title='{{data.cellTputDl}}'>{{data.cellTputDl}}</span></td>
+                                                    <td *ngIf="data.tputDlRed === '0'"><span class='abnormalTable span'
+                                                            title='{{data.cellTputDl}}'>{{data.cellTputDl}}</span></td>
+
+                                                    <td><span class='abnormalTable span'
+                                                            title={{data.checkTime}}>{{data.checkTime}}</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </nz-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ---------------------------------------------------------------------------------------------------------- -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <app-footer></app-footer>
+    <!-- 下面的内容为解决ts代码里面中文字符串国际化 -->
+    <div style="display: none">
+        <!-- 城市下拉框加载失败 -->
+        <div id="citySelectFailed">{{'citySelectFailed' | translate}}</div>
+        <!-- 地区下拉框加载失败 -->
+        <div id="areaSelectFailed">{{'areaSelectFailed' | translate}}</div>
+        <!-- 维度下拉框加载失败 -->
+        <div id="dimensionSelectFailed">{{'dimensionSelectFailed' | translate}}</div>
+        <!-- 总量 -->
+        <div id="total">{{'total' | translate}}</div>
+        <!-- 基站 -->
+        <div id="bts">{{'bts' | translate}}</div>
+        <!-- 小区 -->
+        <div id="cell">{{'cell' | translate}}</div>
+        <!-- 异常持续时长 -->
+        <div id="abnormalLast">{{'abnormalLast' | translate}}</div>
+        <!-- 异常呈现折线图加载失败 -->
+        <div id="lineChartFailed">{{'lineChartFailed' | translate}}</div>
+        <!-- 结束时间小于开始时间，请修改 -->
+        <div id="timeLimitInfo">{{'timeLimitInfo' | translate}}</div>
+        <!-- 用户失效，请重新登录 -->
+        <div id="userInvalid">{{'userInvalid' | translate}}</div>
+        <!-- 数据列表加载失败 -->
+        <div id="dataListFailed">{{'dataListFailed' | translate}}</div>
+    </div>
+</body>

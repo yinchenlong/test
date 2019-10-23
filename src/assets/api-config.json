@@ -1,0 +1,7 @@
+{
+    "requestUrl" : "http://127.0.0.1:9999",
+    "btsInfoManageUrl" : "http://172.16.73.52:1171/#/neg-bts-manage",
+    "btsSelectUrl" : "http://172.16.73.52:1181/#/neg-bts-select",
+    "mapUrl" : "http://172.16.73.51:1081/cloud_map",
+    "negLoginUrl" : "http://localhost:9988"
+}

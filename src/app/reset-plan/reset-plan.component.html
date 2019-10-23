@@ -1,0 +1,250 @@
+<button nz-button nzType="primary" nzSize="small" class="btn btn-info btn-xs" style="margin-right: 18px;" (click)="thrSetting(1)"><i
+        nz-icon type="setting"></i></button>
+
+<!-- 重启方案预设窗口 -->
+<nz-modal [(nzVisible)]="visible" nzWidth="850px" nzTitle="{{'setInfo' | translate}}" [nzFooter]="thrSettingFooter"
+    (nzOnCancel)="handleThrCancel()">
+    <div class="row">
+        <div class="col-xs-12">
+            <ul *ngIf="isActive === 1" class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a role="tab" (click)="planTypeTabClick(1)" data-toggle="tab"
+                        hasInit='true'>{{'nomalResetMode' | translate}}</a>
+                </li>
+                <li role="presentation"><a role="tab" (click)="planTypeTabClick(2)" data-toggle="tab"
+                        hasInit='false'>{{'importantResetMode' | translate}}</a>
+                </li>
+            </ul>
+            <ul *ngIf="isActive === 2" class="nav nav-tabs" role="tablist">
+                <li role="presentation"><a role="tab" data-toggle="tab" (click)="planTypeTabClick(1)"
+                        hasInit='true'>{{'nomalResetMode' | translate}}</a>
+                </li>
+                <li role="presentation" class="active"><a role="tab" (click)="planTypeTabClick(2)" data-toggle="tab"
+                        hasInit='false'>{{'importantResetMode' | translate}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <div class="console-title clearfix">
+                <div class="pull-left">
+                    <h5>{{'normalSetting' | translate}}</h5>
+                </div>
+                <div class="pull-right">
+                    <span style="color:red;font-size:12px;">{{'normalSettingTips' | translate}}</span>
+                </div>
+            </div>
+            <div class="clearfix" style="border:1px solid #ccc;padding:10px 0;">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <nz-form-label>{{'autoResetDelayTime' | translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-7">
+                            <nz-form-control>
+                                <nz-select [(ngModel)]="objData.delayTime" style="width:150px;">
+                                    <nz-option [nzLabel]="'1:00'" [nzValue]="'1:00'"></nz-option>
+                                    <nz-option [nzLabel]="'2:00'" [nzValue]="'2:00'"></nz-option>
+                                    <nz-option [nzLabel]="'3:00'" [nzValue]="'3:00'"></nz-option>
+                                    <nz-option [nzLabel]="'4:00'" [nzValue]="'4:00'"></nz-option>
+                                    <nz-option [nzLabel]="'5:00'" [nzValue]="'5:00'"></nz-option>
+                                    <nz-option [nzLabel]="'6:00'" [nzValue]="'6:00'"></nz-option>
+                                </nz-select>&nbsp;&nbsp;{{'nextDay' | translate}}
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="sleepCell === true">
+                <div class="console-title clearfix">
+                    <div class="pull-left">
+                        <h5>{{'sleepingBtsSetting' | translate}}</h5>
+                    </div>
+                    <div class="pull-right">
+                        <span style="color:red;font-size:12px;">{{'sleepingBtsSettingTips' | translate}}</span>
+                    </div>
+                </div>
+                <div class="clearfix" style="border:1px solid #ccc;padding:10px 0;">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'tputThreshold' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.tputThreshold"
+                                        style="width:150px;">&nbsp;&nbsp;MB
+                                </nz-form-control>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'rachSetupAtpts' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.rachSetupAtpts"
+                                        style="width:150px;">&nbsp;&nbsp;{{'times' | translate}}
+                                </nz-form-control>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'rachSetupSuccessRatio' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.rachSetupSuccessRatio"
+                                        style="width:150px;">&nbsp;&nbsp;%
+                                </nz-form-control>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'rrcConnAtmps' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.rrcConnAtmps"
+                                        style="width:150px;">&nbsp;&nbsp;{{'times' | translate}}
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'rrcConnSuccessRatio' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.rrcConnSuccessRatio"
+                                        style="width:170px;">&nbsp;&nbsp;%
+                                </nz-form-control>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'erabConnAtmps' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.erabConnAtmps"
+                                        style="width:170px;">&nbsp;&nbsp;{{'times' | translate}}
+                                </nz-form-control>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <nz-form-label>{{'erabConnSuccessRatio' | translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-7">
+                                <nz-form-control>
+                                    <input nz-input type="text" [(ngModel)]="objData.erabConnSuccessRatio"
+                                        style="width:170px;">&nbsp;&nbsp;%
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="console-title clearfix" style="margin-top:10px;">
+                <div class="pull-left">
+                    <h5>{{'immediateResetSetting' | translate}}</h5>
+                </div>
+                <div class="pull-right">
+                    <span style="color:red;font-size:12px;">{{'immediateResetSettingTips' | translate}}</span>
+                </div>
+            </div>
+            <nz-table #smallTable nzBordered nzSize="small" [nzData]="dimensionList"
+                [nzNoResult]="'tableNoResult' | translate">
+                <thead>
+                    <tr>
+                        <th>{{'resetType' | translate}}</th>
+                        <th>{{'btsBindingNum' | translate}}</th>
+                        <th>{{'operation' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of smallTable.data">
+                        <td width=600>{{data.name}}</td>
+                        <td width=600>{{data.bindBtsNum}}</td>
+                        <td width=300>
+                            <button nz-button nzSize="small" class="btn btn-primary btn-xs"
+                                (click)="bindBtsFun(data.taskId, data.code)">{{'dindBts' | translate}}</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+            <div style="padding-top:10px;line-height: 30px;">
+                <div class="pull-left" style="font-size:20px;">
+                    {{'status' | translate}}:<span *ngIf="activateStates === 0" style="color:orange;">{{'notActive' | translate}}</span>
+                    <span *ngIf="activateStates === 1" style="color:green;">{{'actived' | translate}}</span>
+                </div>
+                <div class="pull-right">
+                    <ng-template #thrSettingFooter>
+                        <button *ngIf="activateStates === 0" nz-button nzType="primary"
+                            (click)="handleThrActive()">{{'active' | translate}}</button>
+                        <button *ngIf="activateStates === 1" nz-button nzType="primary" (click)="handleThrActive()"
+                            disabled>{{'active' | translate}}</button>
+                        <button nz-button nzType="primary" (click)="handleThrSave()">{{'save' | translate}}</button>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- 下面的内容为解决ts代码里面中文字符串国际化 -->
+<div style="display: none">
+    <!-- 用户失效，请重新登录 -->
+    <div id="userInvalid">{{'userInvalid' | translate}}</div>
+    <!-- 预设信息加载失败 -->
+    <div id="resetPlanFailed">{{'resetPlanFailed' | translate}}</div>
+    <!-- 绑定基站操作失败 -->
+    <div id="bindingBtsFailed">{{'bindingBtsFailed' | translate}}</div>
+    <!-- 保存成功 -->
+    <div id="saveSuccessfully">{{'saveSuccessfully' | translate}}</div>
+    <!-- 保存失败 -->
+    <div id="saveFailed">{{'saveFailed' | translate}}</div>
+    <!-- 唤醒有效期,请填写数字 -->
+    <div id="inputTputusefulCheck">{{'inputTputusefulCheck' | translate}}</div>
+    <!-- 请填写休眠小区流量阈值 -->
+    <div id="inputTputThreshold">{{'inputTputThreshold' | translate}}</div>
+    <!-- 休眠小区流量阈值,请填写数字 -->
+    <div id="inputTputThresholdCheck">{{'inputTputThresholdCheck' | translate}}</div>
+    <!-- 请填写RACH接入尝试次数 -->
+    <div id="inputRachSetupAtpts">{{'inputRachSetupAtpts' | translate}}</div>
+    <!-- RACH接入尝试次数,请填写数字 -->
+    <div id="inputRachSetupAtptsCheck">{{'inputRachSetupAtptsCheck' | translate}}</div>
+    <!-- 请填写RACH接入成功率 -->
+    <div id="inputRachSetupSuccessRatio">{{'inputRachSetupSuccessRatio' | translate}}</div>
+    <!-- RACH接入成功率,请填写数字 -->
+    <div id="inputRachSetupSuccessRatioCheck">{{'inputRachSetupSuccessRatioCheck' | translate}}</div>
+    <!-- 请填写RRC连接建立请求次数 -->
+    <div id="inputRrcConnAtmps">{{'inputRrcConnAtmps' | translate}}</div>
+    <!-- RRC连接建立请求次数,请填写数字 -->
+    <div id="inputRrcConnAtmpsCheck">{{'inputRrcConnAtmpsCheck' | translate}}</div>
+    <!-- 请填写RRC连接建立成功率 -->
+    <div id="inputRrcConnSuccessRatio">{{'inputRrcConnSuccessRatio' | translate}}</div>
+    <!-- RRC连接建立成功率,请填写数字 -->
+    <div id="inputRrcConnSuccessRatioCheck">{{'inputRrcConnSuccessRatioCheck' | translate}}</div>
+    <!-- 请填写E-RAB建立成功请求次数 -->
+    <div id="inputErabConnAtmps">{{'inputErabConnAtmps' | translate}}</div>
+    <!-- E-RAB建立成功请求次数,请填写数字 -->
+    <div id="inputErabConnAtmpsCheck">{{'inputErabConnAtmpsCheck' | translate}}</div>
+    <!-- 请填写E-RAB建立成功率 -->
+    <div id="inputErabConnSuccessRatio">{{'inputErabConnSuccessRatio' | translate}}</div>
+    <!-- E-RAB建立成功率,请填写数字 -->
+    <div id="inputErabConnSuccessRatioCheck">{{'inputErabConnSuccessRatioCheck' | translate}}</div>
+    <!-- 提示 -->
+    <div id="tips">{{'tips' | translate}}</div>
+    <!-- 绑定操作结束后请点击确认按钮保存 -->
+    <div id="bindingInfo">{{'bindingInfo' | translate}}</div>
+    <!-- 明白 -->
+    <div id="iSee">{{'iSee' | translate}}</div>
+    <!-- 确定 -->
+    <div id="ok">{{'ok' | translate}}</div>
+    <!-- 请先保存预设信息后，再激活。 -->
+    <div id="activeTips">{{'activeTips' | translate}}</div>
+</div>
